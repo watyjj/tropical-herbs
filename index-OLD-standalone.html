@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Tropical Herbs — Traditional healing with premium tropical herbal products. Natural remedies trusted for generations. Order via WhatsApp." />
+  <meta name="theme-color" content="#0a0f0a" />
+  <title>Tropical Herbs | Traditional Herbal Healing</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            background: '#0a0f0a',
+            whatsapp: '#25D366',
+            herb: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              950: '#052e16',
+            },
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+            'float': 'float 4s ease-in-out infinite',
+            'spin-slow': 'spin 20s linear infinite',
+            'bounce-soft': 'bounceSoft 2s ease-in-out infinite',
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { boxShadow: '0 0 0 0 rgba(37, 211, 102, 0.5)' },
+              '50%': { boxShadow: '0 0 0 12px rgba(37, 211, 102, 0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            bounceSoft: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(8px)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Custom scrollbar & base styles -->
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #0a0f0a;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0f0a; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #15803d, #22c55e);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: #4ade80; }
+    .leaf-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2322c55e' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #22c55e, #4ade80, #86efac);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .glass-nav {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(10, 15, 10, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    iconify-icon { display: inline-block; vertical-align: middle; }
+  </style>
+
+  <!-- Iconify CDN -->
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+
+  <!-- ES Module Shims for broader browser support -->
+  <script async src="https://unpkg.com/es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@18.3.1",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+      "framer-motion": "https://esm.sh/framer-motion@11.11.17"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Babel for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone@7.24.0/babel.min.js"></script>
+
+  <script type="text/babel" data-type="module">
+    import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+    import { createRoot } from 'react-dom/client';
+    import {
+      motion,
+      AnimatePresence,
+      useInView,
+      useScroll,
+      useTransform,
+    } from 'framer-motion';
+
+    /* ═══════════════════════════════════════════════════════════════
+       CONFIGURATION — Change your WhatsApp number here
+       Format: country code + number, no + or spaces (e.g. 27812345678)
+    ═══════════════════════════════════════════════════════════════ */
+    const WHATSAPP_NUMBER = '27812345678';
+    const PHONE_DISPLAY = '+27 81 234 5678';
+    const BUSINESS_LOCATION = 'Johannesburg, South Africa';
+
+    /* ─── WhatsApp URL Helper ─── */
+    const getWhatsAppUrl = (message) => {
+      const encoded = encodeURIComponent(message);
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+    };
+
+    const DEFAULT_MESSAGE = "Hi! I'd like to learn more about your tropical herbal products.";
+    const CONSULT_MESSAGE = "Hi! I'd like to book a consultation about your traditional herbal remedies.";
+    const ORDER_MESSAGE = "Hi! I'd like to place an order for your herbal products.";
+
+    /* ─── Product Data ─── */
+    const PRODUCTS = [
+      {
+        id: 1,
+        name: 'Bee Green Tea',
+        category: 'Detox & Cleansing',
+        icon: 'fluent-emoji-flat:teacup-without-handle',
+        accent: '#22c55e',
+        accentLight: '#4ade80',
+        gradient: 'from-green-500/20 to-emerald-600/10',
+        description: 'A powerful detox blend crafted from tropical green herbs and natural bee pollen extracts.',
+        benefits: ['Detoxifies the body', 'Boosts immunity', 'Rich in antioxidants', 'Improves digestion'],
+      },
+      {
+        id: 2,
+        name: 'Kayamani Green Mix',
+        category: 'Body Regulation',
+        icon: 'fluent-emoji-flat:balance-scale',
+        accent: '#10b981',
+        accentLight: '#34d399',
+        gradient: 'from-emerald-500/20 to-teal-600/10',
+        description: 'Traditional formula that restores harmony to your body\'s natural systems and rhythms.',
+        benefits: ['Regulates body systems', 'Restores natural balance', 'Supports organ function', 'Reduces inflammation'],
+      },
+      {
+        id: 3,
+        name: 'Moringa Vitality Blend',
+        category: 'Energy & Strength',
+        icon: 'fluent-emoji-flat:high-voltage',
+        accent: '#84cc16',
+        accentLight: '#a3e635',
+        gradient: 'from-lime-500/20 to-green-600/10',
+        description: 'Superfood-powered blend from the miracle moringa tree for sustained natural energy.',
+        benefits: ['Boosts energy levels', 'Rich in vitamins & minerals', 'Supports brain function', 'Anti-aging properties'],
+      },
+      {
+        id: 4,
+        name: 'Sleep Well Tonic',
+        category: 'Sleep & Relaxation',
+        icon: 'fluent-emoji-flat:crescent-moon',
+        accent: '#6366f1',
+        accentLight: '#818cf8',
+        gradient: 'from-indigo-500/20 to-purple-600/10',
+        description: 'Calming herbal tonic blended with traditional sleep herbs for restful, deep sleep.',
+        benefits: ['Promotes deep sleep', 'Reduces anxiety', 'Calms nervous system', 'Non-habit forming'],
+      },
+      {
+        id: 5,
+        name: 'Blood Cleanser Formula',
+        category: 'Blood Purification',
+        icon: 'fluent-emoji-flat:drop-of-blood',
+        accent: '#ef4444',
+        accentLight: '#f87171',
+        gradient: 'from-red-500/20 to-rose-600/10',
+        description: 'Ancient blood purification formula using tropical roots and cleansing herbs.',
+        benefits: ['Purifies the blood', 'Improves circulation', 'Clears skin conditions', 'Supports liver health'],
+      },
+      {
+        id: 6,
+        name: 'Joint & Bone Relief',
+        category: 'Pain & Inflammation',
+        icon: 'fluent-emoji-flat:bone',
+        accent: '#f59e0b',
+        accentLight: '#fbbf24',
+        gradient: 'from-amber-500/20 to-orange-600/10',
+        description: 'Traditional anti-inflammatory blend for joint mobility and bone strength.',
+        benefits: ['Reduces joint pain', 'Fights inflammation', 'Improves mobility', 'Strengthens bones'],
+      },
+      {
+        id: 7,
+        name: 'Fertility Boost Blend',
+        category: 'Reproductive Health',
+        icon: 'fluent-emoji-flat:seedling',
+        accent: '#ec4899',
+        accentLight: '#f472b6',
+        gradient: 'from-pink-500/20 to-rose-600/10',
+        description: 'Time-honored fertility formula passed down through generations of traditional healers.',
+        benefits: ['Supports fertility', 'Balances hormones', 'Improves reproductive health', 'Traditional formula'],
+      },
+      {
+        id: 8,
+        name: 'Stomach Soothe Tea',
+        category: 'Digestive Health',
+        icon: 'fluent-emoji-flat:hot-beverage',
+        accent: '#d97706',
+        accentLight: '#f59e0b',
+        gradient: 'from-orange-500/20 to-amber-600/10',
+        description: 'Gentle digestive tea brewed from soothing tropical herbs for stomach comfort.',
+        benefits: ['Soothes stomach pain', 'Reduces bloating', 'Aids digestion', 'Improves appetite'],
+      },
+      {
+        id: 9,
+        name: 'Immune Warrior Mix',
+        category: 'Immune Support',
+        icon: 'fluent-emoji-flat:shield',
+        accent: '#06b6d4',
+        accentLight: '#22d3ee',
+        gradient: 'from-cyan-500/20 to-teal-600/10',
+        description: 'Potent immune-boosting blend with traditional African medicinal herbs and roots.',
+        benefits: ['Strengthens immunity', 'Fights infections', 'Reduces cold symptoms', 'Year-round protection'],
+      },
+      {
+        id: 10,
+        name: 'Sugar Balance Capsules',
+        category: 'Blood Sugar Control',
+        icon: 'fluent-emoji-flat:pill',
+        accent: '#8b5cf6',
+        accentLight: '#a78bfa',
+        gradient: 'from-violet-500/20 to-purple-600/10',
+        description: 'Natural blood sugar support using traditional herbs known for glycemic balance.',
+        benefits: ['Regulates blood sugar', 'Supports pancreas', 'Reduces sugar cravings', 'Natural ingredients'],
+      },
+      {
+        id: 11,
+        name: 'Stress Relief Elixir',
+        category: 'Mental Wellness',
+        icon: 'fluent-emoji-flat:brain',
+        accent: '#14b8a6',
+        accentLight: '#2dd4bf',
+        gradient: 'from-teal-500/20 to-cyan-600/10',
+        description: 'Calming elixir for mental clarity and emotional balance using adaptogenic herbs.',
+        benefits: ['Reduces stress', 'Promotes calmness', 'Improves focus', 'Enhances mood'],
+      },
+      {
+        id: 12,
+        name: 'Skin Repair Oil',
+        category: 'Skin Health',
+        icon: 'fluent-emoji-flat:sparkles',
+        accent: '#f472b6',
+        accentLight: '#f9a8d4',
+        gradient: 'from-pink-400/20 to-rose-500/10',
+        description: 'Nourishing topical oil infused with tropical botanicals for skin healing and repair.',
+        benefits: ['Repairs skin damage', 'Reduces scars', 'Anti-bacterial', 'Natural moisturizer'],
+      },
+    ];
+
+    const CATEGORIES = ['All', ...new Set(PRODUCTS.map((p) => p.category))];
+
+    const TESTIMONIALS = [
+      { id: 1, name: 'Thandi Mokoena', location: 'Johannesburg', rating: 5, text: 'The Bee Green Tea completely transformed my energy levels. I feel lighter, healthier, and more vibrant every day. Truly life-changing traditional medicine!' },
+      { id: 2, name: 'Sipho Nkosi', location: 'Durban', rating: 5, text: 'After years of joint pain, the Joint & Bone Relief blend gave me my mobility back. I can walk without discomfort again. Thank you for this miracle formula.' },
+      { id: 3, name: 'Lerato van der Merwe', location: 'Cape Town', rating: 5, text: 'Sleep Well Tonic is the only natural remedy that actually works for me. I fall asleep peacefully and wake up refreshed. No more restless nights!' },
+      { id: 4, name: 'David Pretorius', location: 'Pretoria', rating: 5, text: 'The Moringa Vitality Blend keeps me energized throughout my busy workdays without any crash. Pure, natural power from traditional healing wisdom.' },
+      { id: 5, name: 'Nomsa Dlamini', location: 'Soweto', rating: 5, text: 'My skin has never looked better since using the Skin Repair Oil. Scars are fading and my complexion glows naturally. Authentic herbal healing at its finest.' },
+      { id: 6, name: 'James Pillay', location: 'Pietermaritzburg', rating: 5, text: 'The Immune Warrior Mix kept my whole family healthy through winter. Fast WhatsApp service and genuine care from a true traditional healer. Highly recommended!' },
+    ];
+
+    /* ─── Animation Variants ─── */
+    const fadeInUp = {
+      hidden: { opacity: 0, y: 40 },
+      visible: (i = 0) => ({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
+      }),
+    };
+
+    const staggerContainer = {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+      },
+    };
+
+    /* ─── Reusable: Scroll-reveal wrapper ─── */
+    function RevealOnScroll({ children, className = '', delay = 0 }) {
+      const ref = useRef(null);
+      const isInView = useInView(ref, { once: true, margin: '-80px' });
+      return (
+        <motion.div
+          ref={ref}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+          variants={fadeInUp}
+          custom={delay}
+          className={className}
+        >
+          {children}
+        </motion.div>
+      );
+    }
+
+    /* ─── WhatsApp Floating Button with Tooltip ─── */
+    function WhatsAppFloat() {
+      const [showTooltip, setShowTooltip] = useState(false);
+      const [tooltipVisible, setTooltipVisible] = useState(false);
+
+      useEffect(() => {
+        const showTimer = setTimeout(() => {
+          setShowTooltip(true);
+          setTooltipVisible(true);
+        }, 3000);
+        const hideTimer = setTimeout(() => {
+          setTooltipVisible(false);
+          setTimeout(() => setShowTooltip(false), 400);
+        }, 7000);
+        return () => {
+          clearTimeout(showTimer);
+          clearTimeout(hideTimer);
+        };
+      }, []);
+
+      return (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+          <AnimatePresence>
+            {showTooltip && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, x: 20 }}
+                animate={tooltipVisible ? { opacity: 1, scale: 1, x: 0 } : { opacity: 0, scale: 0.8, x: 20 }}
+                exit={{ opacity: 0, scale: 0.8, x: 20 }}
+                transition={{ duration: 0.3 }}
+                className="bg-white text-gray-900 text-sm font-medium px-4 py-2.5 rounded-2xl shadow-xl whitespace-nowrap"
+              >
+                Need help? Chat with us! 💬
+                <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-white rotate-45" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <motion.a
+            href={getWhatsAppUrl(DEFAULT_MESSAGE)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Chat on WhatsApp"
+            className="relative flex items-center justify-center w-14 h-14 rounded-full bg-whatsapp text-white shadow-lg animate-pulse-glow"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <iconify-icon icon="mdi:whatsapp" width="28" height="28"></iconify-icon>
+          </motion.a>
+        </div>
+      );
+    }
+
+    /* ─── Navbar ─── */
+    function Navbar() {
+      const [scrolled, setScrolled] = useState(false);
+      const [mobileOpen, setMobileOpen] = useState(false);
+
+      useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', onScroll);
+        return () => window.removeEventListener('scroll', onScroll);
+      }, []);
+
+      const navLinks = [
+        { label: 'Home', href: '#home' },
+        { label: 'Products', href: '#products' },
+        { label: 'About', href: '#about' },
+        { label: 'Testimonials', href: '#testimonials' },
+        { label: 'Contact', href: '#contact' },
+      ];
+
+      const handleNavClick = () => setMobileOpen(false);
+
+      return (
+        <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled ? 'glass-nav shadow-lg shadow-black/20' : 'bg-transparent'}`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16 lg:h-20">
+              {/* Logo */}
+              <a href="#home" className="flex items-center gap-2 group">
+                <span className="text-2xl">🌿</span>
+                <span className="text-white font-bold text-lg tracking-tight group-hover:text-herb-400 transition-colors">
+                  Tropical Herbs
+                </span>
+              </a>
+
+              {/* Desktop Links */}
+              <div className="hidden lg:flex items-center gap-8">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="text-gray-400 hover:text-herb-400 text-sm font-medium transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                <motion.a
+                  href={getWhatsAppUrl(DEFAULT_MESSAGE)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-whatsapp hover:bg-[#20bd5a] text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <iconify-icon icon="mdi:whatsapp" width="18" height="18"></iconify-icon>
+                  Chat Now
+                </motion.a>
+              </div>
+
+              {/* Mobile Hamburger */}
+              <button
+                className="lg:hidden text-white p-2"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label="Toggle menu"
+              >
+                <iconify-icon icon={mobileOpen ? 'mdi:close' : 'mdi:menu'} width="28" height="28"></iconify-icon>
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Menu */}
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="lg:hidden overflow-hidden glass-nav border-t border-white/5"
+              >
+                <div className="px-4 py-4 space-y-1">
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={handleNavClick}
+                      className="block text-gray-300 hover:text-herb-400 hover:bg-white/5 px-4 py-3 rounded-xl text-sm font-medium transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                  <a
+                    href={getWhatsAppUrl(DEFAULT_MESSAGE)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-whatsapp text-white font-semibold px-4 py-3 rounded-full mt-2"
+                  >
+                    <iconify-icon icon="mdi:whatsapp" width="20" height="20"></iconify-icon>
+                    Chat Now
+                  </a>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </nav>
+      );
+    }
+
+    /* ─── Hero Section ─── */
+    function Hero() {
+      const ref = useRef(null);
+      const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+      const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+      const y = useTransform(scrollYProgress, [0, 0.5], [0, -80]);
+      const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+
+      return (
+        <section id="home" ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+          {/* Parallax Background */}
+          <motion.div style={{ y: bgY }} className="absolute inset-0">
+            <div
+              className="absolute inset-0 leaf-pattern"
+              style={{
+                background: 'radial-gradient(ellipse at 50% 0%, rgba(34,197,94,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(21,128,61,0.08) 0%, transparent 50%), #0a0f0a',
+              }}
+            />
+          </motion.div>
+
+          {/* Spinning decorative ring */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg className="w-[600px] h-[600px] opacity-[0.04] animate-spin-slow" viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="90" fill="none" stroke="#22c55e" strokeWidth="0.5" strokeDasharray="4 8" />
+              <circle cx="100" cy="100" r="70" fill="none" stroke="#4ade80" strokeWidth="0.3" strokeDasharray="2 6" />
+              <circle cx="100" cy="100" r="50" fill="none" stroke="#86efac" strokeWidth="0.2" strokeDasharray="1 4" />
+            </svg>
+          </div>
+
+          {/* Hero Content */}
+          <motion.div style={{ opacity, y }} className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center pt-24 pb-32">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 bg-herb-950/80 border border-herb-800/30 rounded-full px-4 py-2 mb-8"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-herb-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-herb-500" />
+              </span>
+              <span className="text-herb-300 text-sm font-medium">Traditional Healing · Trusted for Generations</span>
+            </motion.div>
+
+            {/* Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] mb-6"
+            >
+              <span className="text-white">Tropical</span>
+              <br />
+              <span className="text-gradient">Herbal Products</span>
+            </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-gray-400 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+            >
+              Discover the healing power of nature with our handcrafted tropical herbal remedies.
+              Rooted in ancestral wisdom, prepared with pure natural ingredients for your wellbeing.
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+            >
+              <motion.a
+                href={getWhatsAppUrl(ORDER_MESSAGE)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 bg-whatsapp hover:bg-[#20bd5a] text-white font-bold px-8 py-4 rounded-full text-base animate-pulse-glow shadow-lg shadow-whatsapp/20"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <iconify-icon icon="mdi:whatsapp" width="22" height="22"></iconify-icon>
+                Order via WhatsApp
+                <iconify-icon icon="mdi:arrow-right" width="18" height="18" className="group-hover:translate-x-1 transition-transform inline-block"></iconify-icon>
+              </motion.a>
+              <motion.a
+                href="#products"
+                className="group inline-flex items-center gap-2 border border-white/20 hover:border-herb-500/50 text-white font-semibold px-8 py-4 rounded-full text-base hover:bg-white/5 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                View Products
+                <iconify-icon icon="mdi:arrow-down" width="18" height="18" className="group-hover:translate-y-1 transition-transform inline-block"></iconify-icon>
+              </motion.a>
+            </motion.div>
+
+            {/* Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="grid grid-cols-3 gap-4 sm:gap-8 max-w-lg mx-auto"
+            >
+              {[
+                { value: '12+', label: 'Herbal Products' },
+                { value: '5000+', label: 'Happy Clients' },
+                { value: '15+', label: 'Years Experience' },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <div className="text-2xl sm:text-3xl font-bold text-gradient">{stat.value}</div>
+                  <div className="text-gray-500 text-xs sm:text-sm mt-1">{stat.label}</div>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Scroll Indicator */}
+          <motion.div
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <span className="text-gray-600 text-xs uppercase tracking-widest">Scroll</span>
+            <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center pt-2">
+              <motion.div
+                className="w-1 h-2 bg-herb-500 rounded-full"
+                animate={{ y: [0, 8, 0], opacity: [1, 0.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </div>
+          </motion.div>
+        </section>
+      );
+    }
+
+    /* ─── Product Card ─── */
+    function ProductCard({ product, index }) {
+      const [hovered, setHovered] = useState(false);
+      const productMessage = `Hi, I'm interested in ${product.name}. Can you tell me more?`;
+
+      return (
+        <motion.div
+          layout
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.3, delay: index * 0.05 }}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          className="group relative rounded-2xl border border-white/5 bg-[rgba(15,25,15,0.6)] p-6 overflow-hidden transition-all duration-300 hover:border-herb-700/30"
+          style={{
+            boxShadow: hovered ? `0 0 40px ${product.accent}20, 0 8px 32px rgba(0,0,0,0.3)` : 'none',
+          }}
+        >
+          {/* Hover gradient background */}
+          <div
+            className={`absolute inset-0 bg-gradient-to-br ${product.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+          />
+
+          <div className="relative z-10">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-4">
+              <motion.div
+                animate={{ scale: hovered ? 1.15 : 1 }}
+                transition={{ duration: 0.3 }}
+                className="text-4xl"
+              >
+                <iconify-icon icon={product.icon} width="48" height="48"></iconify-icon>
+              </motion.div>
+              <span
+                className="text-xs font-medium px-3 py-1 rounded-full border"
+                style={{
+                  color: product.accentLight,
+                  borderColor: `${product.accent}40`,
+                  backgroundColor: `${product.accent}15`,
+                }}
+              >
+                {product.category}
+              </span>
+            </div>
+
+            {/* Name & Description */}
+            <h3 className="text-white font-bold text-lg mb-2 group-hover:text-herb-400 transition-colors">
+              {product.name}
+            </h3>
+            <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+              {product.description}
+            </p>
+
+            {/* Benefits */}
+            <ul className="space-y-2 mb-6">
+              {product.benefits.map((benefit) => (
+                <li key={benefit} className="flex items-center gap-2 text-sm text-gray-400">
+                  <iconify-icon
+                    icon="mdi:check-circle"
+                    width="16"
+                    height="16"
+                    style={{ color: product.accent }}
+                  ></iconify-icon>
+                  {benefit}
+                </li>
+              ))}
+            </ul>
+
+            {/* Enquire Button */}
+            <motion.a
+              href={getWhatsAppUrl(productMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/btn inline-flex items-center justify-center gap-2 w-full py-3 rounded-full text-sm font-semibold text-white transition-all"
+              style={{ backgroundColor: hovered ? product.accent : `${product.accent}90` }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <iconify-icon icon="mdi:whatsapp" width="18" height="18"></iconify-icon>
+              Enquire Now
+              <iconify-icon icon="mdi:arrow-right" width="16" height="16" className="group-hover/btn:translate-x-1 transition-transform inline-block"></iconify-icon>
+            </motion.a>
+          </div>
+        </motion.div>
+      );
+    }
+
+    /* ─── Products Section ─── */
+    function Products() {
+      const [activeCategory, setActiveCategory] = useState('All');
+
+      const filtered = useMemo(
+        () => (activeCategory === 'All' ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeCategory)),
+        [activeCategory]
+      );
+
+      return (
+        <section id="products" className="py-24 lg:py-32 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <RevealOnScroll>
+              <div className="text-center mb-12">
+                <span className="text-herb-500 text-sm font-bold uppercase tracking-widest">Our Products</span>
+                <h2 className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mt-3 tracking-tight">
+                  Natural Healing Solutions
+                </h2>
+                <p className="text-gray-500 mt-4 max-w-2xl mx-auto">
+                  Each remedy is hand-prepared using time-tested tropical herbs, roots, and natural ingredients
+                  passed down through generations of traditional healing.
+                </p>
+              </div>
+            </RevealOnScroll>
+
+            {/* Category Filters */}
+            <RevealOnScroll delay={1}>
+              <div className="flex flex-wrap justify-center gap-2 mb-12">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      activeCategory === cat
+                        ? 'bg-herb-600 text-white shadow-lg shadow-herb-600/20'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </RevealOnScroll>
+
+            {/* Product Grid */}
+            <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+              <AnimatePresence mode="popLayout">
+                {filtered.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </section>
+      );
+    }
+
+    /* ─── About Section ─── */
+    function About() {
+      const trustBadges = [
+        { icon: 'fluent-emoji-flat:herb', label: '100% Natural', desc: 'Pure ingredients' },
+        { icon: 'fluent-emoji-flat:microscope', label: 'Lab Tested', desc: 'Quality assured' },
+        { icon: 'fluent-emoji-flat:palms-up-together-medium-light-skin-tone', label: 'Hand Prepared', desc: 'With care & tradition' },
+        { icon: 'fluent-emoji-flat:delivery-truck', label: 'Nationwide Delivery', desc: 'Across South Africa' },
+      ];
+
+      return (
+        <section id="about" className="py-24 lg:py-32 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              {/* Image Column */}
+              <RevealOnScroll>
+                <div className="relative">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.7 }}
+                    className="relative rounded-3xl overflow-hidden"
+                  >
+                    <img
+                      src="https://picsum.photos/seed/tropicalherbs/600/700"
+                      alt="Traditional healer preparing herbal remedies"
+                      className="w-full h-[400px] lg:h-[500px] object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f0a] via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-herb-900/30 to-transparent" />
+                  </motion.div>
+
+                  {/* Floating Card */}
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute -bottom-6 -right-4 sm:right-6 bg-[rgba(15,25,15,0.9)] backdrop-blur-md border border-herb-700/30 rounded-2xl px-6 py-4 shadow-xl"
+                  >
+                    <div className="text-3xl font-black text-gradient">15+</div>
+                    <div className="text-gray-400 text-sm">Years Healing Experience</div>
+                  </motion.div>
+                </div>
+              </RevealOnScroll>
+
+              {/* Text Column */}
+              <motion.div
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-80px' }}
+              >
+                <motion.span variants={fadeInUp} className="text-herb-500 text-sm font-bold uppercase tracking-widest">
+                  About the Healer
+                </motion.span>
+                <motion.h2 variants={fadeInUp} custom={1} className="text-white text-3xl sm:text-4xl font-bold mt-3 mb-6 tracking-tight">
+                  Rooted in Tradition,<br />Guided by Nature
+                </motion.h2>
+                <motion.p variants={fadeInUp} custom={2} className="text-gray-400 leading-relaxed mb-4">
+                  For over fifteen years, I have dedicated my life to the ancient art of traditional healing.
+                  My knowledge comes from generations of healers in my family, who passed down sacred formulas
+                  using the purest tropical herbs, roots, and natural remedies found across Africa.
+                </motion.p>
+                <motion.p variants={fadeInUp} custom={3} className="text-gray-400 leading-relaxed mb-8">
+                  Every product is hand-prepared in small batches to preserve potency and authenticity.
+                  I believe true healing comes from nature — not synthetic chemicals. My mission is to bring
+                  the wisdom of traditional medicine to modern lives, helping thousands find natural relief
+                  and lasting wellness.
+                </motion.p>
+
+                {/* Trust Badges */}
+                <motion.div variants={fadeInUp} custom={4} className="grid grid-cols-2 gap-4 mb-8">
+                  {trustBadges.map((badge) => (
+                    <div
+                      key={badge.label}
+                      className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-herb-700/30 transition-colors"
+                    >
+                      <iconify-icon icon={badge.icon} width="32" height="32"></iconify-icon>
+                      <div>
+                        <div className="text-white text-sm font-semibold">{badge.label}</div>
+                        <div className="text-gray-500 text-xs">{badge.desc}</div>
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
+
+                <motion.a
+                  variants={fadeInUp}
+                  custom={5}
+                  href={getWhatsAppUrl(CONSULT_MESSAGE)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 bg-herb-600 hover:bg-herb-500 text-white font-semibold px-6 py-3.5 rounded-full transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <iconify-icon icon="mdi:whatsapp" width="20" height="20"></iconify-icon>
+                  Consult with Me
+                  <iconify-icon icon="mdi:arrow-right" width="18" height="18" className="group-hover:translate-x-1 transition-transform inline-block"></iconify-icon>
+                </motion.a>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    /* ─── Testimonials Section ─── */
+    function Testimonials() {
+      const [current, setCurrent] = useState(0);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setCurrent((prev) => (prev + 1) % TESTIMONIALS.length);
+        }, 5000);
+        return () => clearInterval(timer);
+      }, []);
+
+      const testimonial = TESTIMONIALS[current];
+
+      return (
+        <section id="testimonials" className="py-24 lg:py-32 relative">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <RevealOnScroll>
+              <div className="text-center mb-12">
+                <span className="text-herb-500 text-sm font-bold uppercase tracking-widest">Testimonials</span>
+                <h2 className="text-white text-3xl sm:text-4xl font-bold mt-3 tracking-tight">
+                  What Our Clients Say
+                </h2>
+              </div>
+            </RevealOnScroll>
+
+            <div className="relative min-h-[280px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={testimonial.id}
+                  initial={{ opacity: 0, x: 60 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -60 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="bg-[rgba(15,25,15,0.6)] border border-white/5 rounded-2xl p-8 sm:p-10 text-center hover:border-herb-700/30 transition-colors"
+                >
+                  {/* Stars */}
+                  <div className="flex justify-center gap-1 mb-6">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <iconify-icon key={i} icon="mdi:star" width="22" height="22" style={{ color: '#fbbf24' }}></iconify-icon>
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <p className="text-gray-300 text-lg sm:text-xl italic leading-relaxed mb-8">
+                    &ldquo;{testimonial.text}&rdquo;
+                  </p>
+
+                  {/* Author */}
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-herb-500 to-herb-700 flex items-center justify-center text-white font-bold text-lg">
+                      {testimonial.name.charAt(0)}
+                    </div>
+                    <div className="text-left">
+                      <div className="text-white font-semibold">{testimonial.name}</div>
+                      <div className="text-gray-500 text-sm">{testimonial.location}, South Africa</div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Dot Navigation */}
+            <div className="flex justify-center gap-2 mt-8">
+              {TESTIMONIALS.map((t, i) => (
+                <button
+                  key={t.id}
+                  onClick={() => setCurrent(i)}
+                  aria-label={`View testimonial ${i + 1}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === current ? 'w-8 bg-herb-500' : 'w-2 bg-gray-700 hover:bg-gray-600'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    /* ─── WhatsApp CTA Section ─── */
+    function WhatsAppCTA() {
+      return (
+        <section className="py-24 lg:py-32 relative">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <RevealOnScroll>
+              <div className="relative rounded-3xl p-[1px] bg-gradient-to-br from-herb-500 via-herb-400 to-herb-600 shadow-2xl shadow-herb-500/10">
+                <div className="bg-[rgba(10,15,10,0.95)] rounded-3xl px-8 py-16 sm:px-16 text-center">
+                  {/* Bouncing WhatsApp Icon */}
+                  <motion.div
+                    animate={{ y: [0, -12, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-whatsapp/20 mb-8"
+                  >
+                    <iconify-icon icon="mdi:whatsapp" width="48" height="48" style={{ color: '#25D366' }}></iconify-icon>
+                  </motion.div>
+
+                  <h2 className="text-white text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
+                    Ready to Heal Naturally?
+                  </h2>
+                  <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
+                    Get a free consultation and personalized herbal recommendations.
+                    Message us on WhatsApp — we&apos;re here to guide your healing journey.
+                  </p>
+
+                  <motion.a
+                    href={getWhatsAppUrl(CONSULT_MESSAGE)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-3 bg-whatsapp hover:bg-[#20bd5a] text-white font-bold text-lg px-10 py-5 rounded-full animate-pulse-glow shadow-lg shadow-whatsapp/25"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <iconify-icon icon="mdi:whatsapp" width="26" height="26"></iconify-icon>
+                    Start WhatsApp Chat
+                    <iconify-icon icon="mdi:arrow-right" width="22" height="22" className="group-hover:translate-x-1 transition-transform inline-block"></iconify-icon>
+                  </motion.a>
+
+                  <p className="text-gray-600 text-sm mt-6 flex items-center justify-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-herb-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-herb-500" />
+                    </span>
+                    Usually responds within minutes
+                  </p>
+                </div>
+              </div>
+            </RevealOnScroll>
+          </div>
+        </section>
+      );
+    }
+
+    /* ─── Contact Section ─── */
+    function Contact() {
+      const cards = [
+        {
+          icon: 'mdi:whatsapp',
+          label: 'WhatsApp',
+          value: 'Chat instantly',
+          href: getWhatsAppUrl(DEFAULT_MESSAGE),
+          gradient: 'from-whatsapp/20 to-green-600/10',
+          iconColor: '#25D366',
+          borderHover: 'hover:border-whatsapp/40',
+        },
+        {
+          icon: 'mdi:phone',
+          label: 'Phone',
+          value: PHONE_DISPLAY,
+          href: `tel:${PHONE_DISPLAY.replace(/\s/g, '')}`,
+          gradient: 'from-herb-500/20 to-emerald-600/10',
+          iconColor: '#22c55e',
+          borderHover: 'hover:border-herb-500/40',
+        },
+        {
+          icon: 'mdi:map-marker',
+          label: 'Location',
+          value: BUSINESS_LOCATION,
+          href: 'https://maps.google.com/?q=Johannesburg,South+Africa',
+          gradient: 'from-blue-500/20 to-cyan-600/10',
+          iconColor: '#3b82f6',
+          borderHover: 'hover:border-blue-500/40',
+        },
+      ];
+
+      return (
+        <section id="contact" className="py-24 lg:py-32 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <RevealOnScroll>
+              <div className="text-center mb-12">
+                <span className="text-herb-500 text-sm font-bold uppercase tracking-widest">Contact</span>
+                <h2 className="text-white text-3xl sm:text-4xl font-bold mt-3 tracking-tight">
+                  Get in Touch
+                </h2>
+                <p className="text-gray-500 mt-4">Reach out anytime — we&apos;re always happy to help with your healing journey.</p>
+              </div>
+            </RevealOnScroll>
+
+            <div className="grid sm:grid-cols-3 gap-6">
+              {cards.map((card, i) => (
+                <RevealOnScroll key={card.label} delay={i}>
+                  <motion.a
+                    href={card.href}
+                    target={card.label === 'Location' ? '_blank' : undefined}
+                    rel={card.label === 'Location' ? 'noopener noreferrer' : undefined}
+                    className={`group block rounded-2xl border border-white/5 bg-[rgba(15,25,15,0.6)] p-8 text-center transition-all duration-300 ${card.borderHover} hover:shadow-lg`}
+                    whileHover={{ scale: 1.03, y: -4 }}
+                  >
+                    <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${card.gradient} mb-5 group-hover:scale-110 transition-transform`}>
+                      <iconify-icon icon={card.icon} width="32" height="32" style={{ color: card.iconColor }}></iconify-icon>
+                    </div>
+                    <div className="text-gray-500 text-sm uppercase tracking-wider mb-1">{card.label}</div>
+                    <div className="text-white font-semibold text-lg">{card.value}</div>
+                  </motion.a>
+                </RevealOnScroll>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    /* ─── Footer ─── */
+    function Footer() {
+      const year = new Date().getFullYear();
+      const popularProducts = PRODUCTS.slice(0, 5);
+
+      return (
+        <footer className="border-t border-white/5 pt-16 pb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
+              {/* Brand */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-2xl">🌿</span>
+                  <span className="text-white font-bold text-lg">Tropical Herbs</span>
+                </div>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Traditional tropical herbal healing products handcrafted with generations of
+                  ancestral knowledge. Natural remedies for a healthier, balanced life.
+                </p>
+              </div>
+
+              {/* Quick Links */}
+              <div>
+                <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+                <ul className="space-y-2">
+                  {['Home', 'Products', 'About', 'Testimonials', 'Contact'].map((link) => (
+                    <li key={link}>
+                      <a
+                        href={`#${link.toLowerCase()}`}
+                        className="text-gray-500 hover:text-herb-400 text-sm transition-colors"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Popular Products */}
+              <div>
+                <h4 className="text-white font-semibold mb-4">Popular Products</h4>
+                <ul className="space-y-2">
+                  {popularProducts.map((p) => (
+                    <li key={p.id}>
+                      <a
+                        href={getWhatsAppUrl(`Hi, I'm interested in ${p.name}. Can you tell me more?`)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-500 hover:text-herb-400 text-sm transition-colors"
+                      >
+                        {p.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Bottom Bar */}
+            <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-gray-600 text-sm">
+                &copy; {year} Tropical Herbs. All rights reserved.
+              </p>
+              <a
+                href={getWhatsAppUrl(DEFAULT_MESSAGE)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-whatsapp hover:text-[#20bd5a] text-sm font-medium transition-colors"
+              >
+                <iconify-icon icon="mdi:whatsapp" width="18" height="18"></iconify-icon>
+                Chat on WhatsApp
+              </a>
+            </div>
+          </div>
+        </footer>
+      );
+    }
+
+    /* ─── Main App ─── */
+    function App() {
+      return (
+        <>
+          <Navbar />
+          <main>
+            <Hero />
+            <Products />
+            <About />
+            <Testimonials />
+            <WhatsAppCTA />
+            <Contact />
+          </main>
+          <Footer />
+          <WhatsAppFloat />
+        </>
+      );
+    }
+
+    /* ─── Mount React App ─── */
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
