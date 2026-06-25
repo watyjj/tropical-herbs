@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminSession } from '@/lib/auth';
 import { createSupabaseAdmin } from '@/lib/supabase';
-import { formatDbError } from '@/lib/api-utils';
 
 async function requireAdmin() {
   if (!(await verifyAdminSession())) {
