@@ -35,6 +35,33 @@ export default function AdminPanel() {
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [editingBanner, setEditingBanner] = useState<Partial<Banner> | null>(null);
   const [editingTestimonial, setEditingTestimonial] = useState<Partial<Testimonial> | null>(null);
+  const [dbStatus, setDbStatus] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const emptyData: SiteData = {
+    settings: {
+      id: 1,
+      site_name: 'Tropical Herbs',
+      whatsapp_number: '27635987328',
+      phone_display: '+27 63 598 7328',
+      location: 'Johannesburg, South Africa',
+      hero_badge: '',
+      hero_title_line1: 'Tropical',
+      hero_title_line2: 'Herbal Products',
+      hero_subtitle: '',
+      hero_image_url: '',
+      about_image_url: '',
+      about_title: '',
+      about_paragraph1: '',
+      about_paragraph2: '',
+      stat_products: '12+',
+      stat_clients: '5000+',
+      stat_years: '15+',
+    },
+    products: [],
+    banners: [],
+    testimonials: [],
+  };
 
   const showMsg = (msg: string) => {
     setMessage(msg);
@@ -56,9 +83,29 @@ export default function AdminPanel() {
 
   const loadData = async () => {
     setLoading(true);
+    setLoadError(null);
     try {
-      const res = await fetch('/api/admin/data');
-      if (res.ok) setData(await res.json());
+      const dataRes = await fetch('/api/admin/data', { credentials: 'include' });
+      if (dataRes.ok) {
+        setData(await dataRes.json());
+      } else {
+        const err = await dataRes.json().catch(() => ({}));
+        setData(emptyData);
+        setLoadError(err.error || `Could not load data (${dataRes.status}). Log out and log in again, then check Vercel env vars and Redeploy.`);
+      }
+
+      try {
+        const diagRes = await fetch('/api/admin/diagnose', { credentials: 'include' });
+        if (diagRes.ok) {
+          const diag = await diagRes.json();
+          setDbStatus(diag.connected ? null : diag.message);
+        }
+      } catch {
+        // diagnose route optional on older deploys
+      }
+    } catch {
+      setData(emptyData);
+      setLoadError('Network error loading admin data. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -72,6 +119,7 @@ export default function AdminPanel() {
     const res = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ password }),
     });
     if (res.ok) {
@@ -127,6 +175,7 @@ export default function AdminPanel() {
     const res = await fetch('/api/admin/products', {
       method: editingProduct.id ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
     setSaving(false);
@@ -136,7 +185,7 @@ export default function AdminPanel() {
       await loadData();
     } else {
       const json = await res.json();
-      showMsg('❌ ' + json.error);
+      showMsg('❌ ' + (json.hint || json.error || 'Failed to save'));
     }
   };
 
@@ -276,6 +325,22 @@ export default function AdminPanel() {
       )}
 
       <div className="max-w-6xl mx-auto px-4 py-6">
+        {loadError && (
+          <div className="bg-amber-950/50 border border-amber-500/40 rounded-2xl p-4 mb-6 text-sm">
+            <p className="text-amber-300 font-semibold mb-1">Could not load admin data</p>
+            <p className="text-amber-100/80">{loadError}</p>
+            <button onClick={loadData} className="mt-3 text-sm bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg">
+              Retry
+            </button>
+          </div>
+        )}
+        {dbStatus && (
+          <div className="bg-red-950/50 border border-red-500/40 rounded-2xl p-4 mb-6 text-sm">
+            <p className="text-red-300 font-semibold mb-1">Database connection problem</p>
+            <p className="text-red-200/80">{dbStatus}</p>
+            <p className="text-gray-400 mt-2">Fix: Vercel → Settings → Environment Variables → verify all 3 Supabase keys → Redeploy.</p>
+          </div>
+        )}
         {/* First-time setup */}
         {data && data.products.length === 0 && (
           <div className="bg-herb-950/50 border border-herb-700/30 rounded-2xl p-6 mb-6 text-center">
@@ -317,12 +382,12 @@ export default function AdminPanel() {
         ) : (
           <>
             {/* PRODUCTS TAB */}
-            {tab === 'products' && data && (
+            {tab === 'products' && (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-white font-bold text-lg">Products ({data.products.length})</h2>
+                  <h2 className="text-white font-bold text-lg">Products ({(data ?? emptyData).products.length})</h2>
                   <button
-                    onClick={() => setEditingProduct({ ...emptyProduct, sort_order: data.products.length + 1 })}
+                    onClick={() => setEditingProduct({ ...emptyProduct, sort_order: (data ?? emptyData).products.length + 1 })}
                     className="flex items-center gap-2 bg-herb-600 hover:bg-herb-500 text-white text-sm font-semibold px-4 py-2 rounded-xl"
                   >
                     <Plus size={16} /> Add Product
@@ -340,7 +405,7 @@ export default function AdminPanel() {
                 )}
 
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  {data.products.map((p) => (
+                  {(data ?? emptyData).products.map((p) => (
                     <div key={p.id} className="bg-[rgba(15,25,15,0.6)] border border-white/5 rounded-2xl overflow-hidden">
                       <div className="relative h-36 bg-black/30">
                         {p.image_url && (
@@ -374,12 +439,12 @@ export default function AdminPanel() {
             )}
 
             {/* BANNERS TAB */}
-            {tab === 'banners' && data && (
+            {tab === 'banners' && (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-white font-bold text-lg">Banners ({data.banners.length})</h2>
+                  <h2 className="text-white font-bold text-lg">Banners ({(data ?? emptyData).banners.length})</h2>
                   <button
-                    onClick={() => setEditingBanner({ type: 'promo', image_url: '', title: '', subtitle: '', link_url: '', sort_order: data.banners.length + 1, is_active: true })}
+                    onClick={() => setEditingBanner({ type: 'promo', image_url: '', title: '', subtitle: '', link_url: '', sort_order: (data ?? emptyData).banners.length + 1, is_active: true })}
                     className="flex items-center gap-2 bg-herb-600 hover:bg-herb-500 text-white text-sm font-semibold px-4 py-2 rounded-xl"
                   >
                     <Plus size={16} /> Add Banner
@@ -397,7 +462,7 @@ export default function AdminPanel() {
                 )}
 
                 <div className="space-y-3 mt-4">
-                  {data.banners.map((b) => (
+                  {(data ?? emptyData).banners.map((b) => (
                     <div key={b.id} className="flex items-center gap-4 bg-[rgba(15,25,15,0.6)] border border-white/5 rounded-2xl p-4">
                       {b.image_url && (
                         <div className="relative w-24 h-16 rounded-lg overflow-hidden flex-shrink-0">
@@ -418,17 +483,17 @@ export default function AdminPanel() {
             )}
 
             {/* SETTINGS TAB */}
-            {tab === 'settings' && data && (
-              <SettingsForm settings={data.settings} onSave={saveSettings} saving={saving} />
+            {tab === 'settings' && (
+              <SettingsForm settings={(data ?? emptyData).settings} onSave={saveSettings} saving={saving} />
             )}
 
             {/* TESTIMONIALS TAB */}
-            {tab === 'testimonials' && data && (
+            {tab === 'testimonials' && (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-white font-bold text-lg">Testimonials ({data.testimonials.length})</h2>
+                  <h2 className="text-white font-bold text-lg">Testimonials ({(data ?? emptyData).testimonials.length})</h2>
                   <button
-                    onClick={() => setEditingTestimonial({ name: '', location: '', rating: 5, text: '', sort_order: data.testimonials.length + 1, is_active: true })}
+                    onClick={() => setEditingTestimonial({ name: '', location: '', rating: 5, text: '', sort_order: (data ?? emptyData).testimonials.length + 1, is_active: true })}
                     className="flex items-center gap-2 bg-herb-600 hover:bg-herb-500 text-white text-sm font-semibold px-4 py-2 rounded-xl"
                   >
                     <Plus size={16} /> Add Review
@@ -446,7 +511,7 @@ export default function AdminPanel() {
                 )}
 
                 <div className="space-y-3 mt-4">
-                  {data.testimonials.map((t) => (
+                  {(data ?? emptyData).testimonials.map((t) => (
                     <div key={t.id} className="bg-[rgba(15,25,15,0.6)] border border-white/5 rounded-2xl p-4 flex justify-between items-start gap-4">
                       <div>
                         <h3 className="text-white font-semibold">{t.name} <span className="text-gray-500 font-normal text-sm">— {t.location}</span></h3>

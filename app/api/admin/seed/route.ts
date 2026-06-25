@@ -11,12 +11,12 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = createSupabaseAdmin();
 
-    const { count: settingsCount } = await supabase
-      .from('settings')
+    const { count: productsCount } = await supabase
+      .from('products')
       .select('*', { count: 'exact', head: true });
 
-    if (settingsCount && settingsCount > 0) {
-      return NextResponse.json({ error: 'Database already seeded. Delete data first if you want to re-seed.' }, { status: 400 });
+    if (productsCount && productsCount > 0) {
+      return NextResponse.json({ error: 'Products already exist. Add more from the Products tab or delete existing products first.' }, { status: 400 });
     }
 
     await supabase.from('settings').upsert({ id: 1, ...DEFAULT_SETTINGS });
