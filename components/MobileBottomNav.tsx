@@ -1,21 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { Home, ShoppingBag, User, MessageCircle } from 'lucide-react';
 import type { Settings } from '@/lib/types';
 import { getWhatsAppUrl, DEFAULT_MESSAGE } from '@/lib/whatsapp';
+import { navigateToSection, sectionHref } from '@/lib/navigation';
 
 const items = [
-  { id: 'home', label: 'Home', href: '#home', icon: Home },
-  { id: 'products', label: 'Shop', href: '#products', icon: ShoppingBag },
-  { id: 'about', label: 'About', href: '#about', icon: User },
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'products', label: 'Shop', icon: ShoppingBag },
+  { id: 'about', label: 'About', icon: User },
 ] as const;
 
 export default function MobileBottomNav({ settings }: { settings: Settings }) {
+  const pathname = usePathname();
   const [active, setActive] = useState('home');
   const waUrl = getWhatsAppUrl(settings, DEFAULT_MESSAGE);
 
   useEffect(() => {
+    if (pathname !== '/') return;
+
     const sections = ['home', 'products', 'about', 'testimonials', 'contact'];
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,7 +38,17 @@ export default function MobileBottomNav({ settings }: { settings: Settings }) {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
+
+  const handleSectionTap = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+      if (pathname === '/') {
+        e.preventDefault();
+        navigateToSection(id, '/');
+      }
+    },
+    [pathname]
+  );
 
   return (
     <nav
@@ -41,13 +56,14 @@ export default function MobileBottomNav({ settings }: { settings: Settings }) {
       aria-label="Mobile navigation"
     >
       <div className="flex items-stretch justify-around px-1 pt-1">
-        {items.map(({ id, label, href, icon: Icon }) => {
+        {items.map(({ id, label, icon: Icon }) => {
           const isActive = active === id || (id === 'about' && ['about', 'testimonials'].includes(active));
           return (
             <a
               key={id}
-              href={href}
-              className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2 min-h-[52px] rounded-xl transition-colors ${
+              href={sectionHref(id, pathname)}
+              onClick={(e) => handleSectionTap(e, id)}
+              className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2 min-h-[52px] rounded-xl transition-colors touch-manipulation ${
                 isActive ? 'text-herb-400' : 'text-gray-500 hover:text-gray-300'
               }`}
               aria-current={isActive ? 'page' : undefined}
@@ -61,7 +77,7 @@ export default function MobileBottomNav({ settings }: { settings: Settings }) {
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2 min-h-[52px] text-whatsapp"
+          className="flex flex-1 flex-col items-center justify-center gap-0.5 py-2 min-h-[52px] text-whatsapp touch-manipulation"
           aria-label="Chat on WhatsApp"
         >
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-whatsapp text-white shadow-glow-whatsapp">

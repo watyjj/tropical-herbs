@@ -20,6 +20,11 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  section[id],
+  main[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
   :focus-visible {
     @apply outline-none ring-2 ring-herb-500 ring-offset-2 ring-offset-background;
   }
