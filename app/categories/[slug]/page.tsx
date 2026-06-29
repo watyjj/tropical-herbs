@@ -47,7 +47,7 @@ export default async function CategoryPage({ params }: Props) {
           ]),
         ]}
       />
-      <main id="main-content" className="pt-20 sm:pt-24">
+      <main id="main-content" className="pt-4 sm:pt-6 lg:pt-24">
         <div className="container-app py-8 sm:py-12">
           <Breadcrumbs
             items={[

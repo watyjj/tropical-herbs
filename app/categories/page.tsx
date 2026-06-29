@@ -24,7 +24,7 @@ export default async function CategoriesIndexPage() {
   return (
     <PublicLayout settings={data.settings} products={data.products}>
       <JsonLd data={itemListSchema(data.products, data.settings)} />
-      <main id="main-content" className="pt-20 sm:pt-24">
+      <main id="main-content" className="pt-4 sm:pt-6 lg:pt-24">
         <div className="container-app py-8 sm:py-12">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Categories' }]} />
           <h1 className="text-display-md text-white mb-3">Herbal Product Categories</h1>

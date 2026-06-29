@@ -25,7 +25,7 @@ export default async function ProductsIndexPage() {
   return (
     <PublicLayout settings={data.settings} products={data.products}>
       <JsonLd data={itemListSchema(data.products, data.settings)} />
-      <main id="main-content" className="pt-20 sm:pt-24">
+      <main id="main-content" className="pt-4 sm:pt-6 lg:pt-24">
         <div className="container-app py-8 sm:py-12">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'All Products' }]} />
           <h1 className="text-display-md text-white mb-3">All Herbal Products</h1>

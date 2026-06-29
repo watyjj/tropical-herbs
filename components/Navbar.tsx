@@ -1,19 +1,20 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Menu, X, MessageCircle } from 'lucide-react';
 import type { Settings } from '@/lib/types';
 import { getWhatsAppUrl, DEFAULT_MESSAGE } from '@/lib/whatsapp';
-import { navigateToSection, sectionHref } from '@/lib/navigation';
+import { sectionHref, scrollToSection } from '@/lib/navigation';
 
 const navLinks = [
-  { id: 'home', label: 'Home', href: '#home' },
-  { id: 'products', label: 'Products', href: '#products' },
-  { id: 'about', label: 'About', href: '#about' },
-  { id: 'testimonials', label: 'Reviews', href: '#testimonials' },
-  { id: 'contact', label: 'Contact', href: '#contact' },
+  { id: 'home', label: 'Home' },
+  { id: 'products', label: 'Products' },
+  { id: 'about', label: 'About' },
+  { id: 'testimonials', label: 'Reviews' },
+  { id: 'contact', label: 'Contact' },
 ];
 
 export default function Navbar({ settings }: { settings: Settings }) {
@@ -21,7 +22,10 @@ export default function Navbar({ settings }: { settings: Settings }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState('home');
+  const [mounted, setMounted] = useState(false);
   const reduced = useReducedMotion();
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -51,48 +55,112 @@ export default function Navbar({ settings }: { settings: Settings }) {
     return () => observer.disconnect();
   }, [pathname]);
 
-  // Scroll to hash when landing on homepage with #section (e.g. from /products page)
   useEffect(() => {
     if (pathname !== '/' || typeof window === 'undefined') return;
     const hash = window.location.hash.replace('#', '');
     if (!hash) return;
-    const timer = setTimeout(() => navigateToSection(hash, '/'), 150);
+    const timer = setTimeout(() => scrollToSection(hash), 200);
     return () => clearTimeout(timer);
   }, [pathname]);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
+
   const closeMobileMenu = useCallback(() => setMobileOpen(false), []);
 
-  const handleSectionNav = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+  const handleMobileNav = useCallback(
+    (id: string) => {
       if (pathname === '/') {
-        e.preventDefault();
+        scrollToSection(id);
         closeMobileMenu();
-        // Close menu first, then scroll (body must not be overflow:hidden)
-        requestAnimationFrame(() => {
-          setTimeout(() => navigateToSection(id, '/'), 50);
-        });
       } else {
         closeMobileMenu();
+        window.location.href = `/#${id}`;
       }
     },
     [pathname, closeMobileMenu]
   );
 
+  const handleDesktopNav = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+      if (pathname === '/') {
+        e.preventDefault();
+        scrollToSection(id);
+      }
+    },
+    [pathname]
+  );
+
   const waUrl = getWhatsAppUrl(settings, DEFAULT_MESSAGE);
+
+  const mobileMenuPortal =
+    mounted && mobileOpen
+      ? createPortal(
+          <div className="lg:hidden" role="presentation">
+            <button
+              type="button"
+              className="fixed inset-0 z-[200] bg-black/75 touch-manipulation"
+              aria-label="Close menu"
+              onClick={closeMobileMenu}
+            />
+            <div
+              id="mobile-menu"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Mobile navigation menu"
+              className="fixed left-0 right-0 top-16 z-[201] mobile-menu-panel max-h-[min(70dvh,480px)] overflow-y-auto overscroll-contain"
+            >
+              <div className="container-app py-3 pb-6 space-y-1">
+                {navLinks.map((link) => (
+                  <button
+                    key={link.id}
+                    type="button"
+                    onClick={() => handleMobileNav(link.id)}
+                    className={`flex w-full items-center min-h-[52px] px-4 rounded-xl text-base font-medium transition-colors touch-manipulation text-left ${
+                      active === link.id
+                        ? 'text-herb-400 bg-herb-500/10'
+                        : 'text-gray-300 active:bg-white/10'
+                    }`}
+                  >
+                    {link.label}
+                  </button>
+                ))}
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={closeMobileMenu}
+                  className="btn-primary w-full gap-2 mt-3 py-3.5 touch-manipulation"
+                >
+                  <MessageCircle size={20} aria-hidden />
+                  Chat on WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
 
   return (
     <header>
       <nav
         aria-label="Main navigation"
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled || mobileOpen ? 'glass-nav shadow-lg shadow-black/20' : 'bg-transparent'
+        className={`fixed top-0 left-0 right-0 z-50 transition-shadow duration-300 ${
+          scrolled || mobileOpen ? 'mobile-top-nav-scrolled' : 'bg-transparent'
         }`}
       >
-        <div className="container-app relative z-[62]">
+        <div className="container-app">
           <div className="flex items-center justify-between h-16 lg:h-[4.5rem]">
             <a
               href={sectionHref('home', pathname)}
-              onClick={(e) => handleSectionNav(e, 'home')}
+              onClick={(e) => handleDesktopNav(e, 'home')}
               className="flex items-center gap-2.5 group min-h-[44px] rounded-xl px-1 -ml-1 touch-manipulation"
               aria-label={`${settings.site_name} — Home`}
             >
@@ -107,9 +175,9 @@ export default function Navbar({ settings }: { settings: Settings }) {
             <div className="hidden lg:flex items-center gap-1">
               {navLinks.map((link) => (
                 <a
-                  key={link.href}
+                  key={link.id}
                   href={sectionHref(link.id, pathname)}
-                  onClick={(e) => handleSectionNav(e, link.id)}
+                  onClick={(e) => handleDesktopNav(e, link.id)}
                   className={`relative px-4 py-2.5 rounded-xl text-sm font-medium transition-colors min-h-[44px] inline-flex items-center touch-manipulation ${
                     active === link.id ? 'text-herb-400' : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
@@ -136,7 +204,7 @@ export default function Navbar({ settings }: { settings: Settings }) {
 
             <button
               type="button"
-              className="lg:hidden btn-ghost p-2.5 touch-manipulation relative z-[62]"
+              className="lg:hidden btn-ghost p-2.5 touch-manipulation"
               onClick={() => setMobileOpen((open) => !open)}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
@@ -146,64 +214,8 @@ export default function Navbar({ settings }: { settings: Settings }) {
             </button>
           </div>
         </div>
-
-        <AnimatePresence>
-          {mobileOpen && (
-            <>
-              <motion.button
-                type="button"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="fixed inset-0 z-[60] bg-black/70 lg:hidden touch-manipulation"
-                aria-label="Close menu"
-                onClick={closeMobileMenu}
-              />
-
-              <motion.div
-                id="mobile-menu"
-                role="dialog"
-                aria-modal="true"
-                aria-label="Mobile navigation menu"
-                initial={reduced ? false : { opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduced ? undefined : { opacity: 0, y: -8 }}
-                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                className="fixed left-0 right-0 top-16 z-[61] lg:hidden glass-nav border-t border-white/[0.06] shadow-2xl max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain"
-              >
-                <div className="container-app py-3 pb-6 space-y-1">
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.href}
-                      href={sectionHref(link.id, pathname)}
-                      onClick={(e) => handleSectionNav(e, link.id)}
-                      className={`flex items-center min-h-[52px] px-4 rounded-xl text-base font-medium transition-colors touch-manipulation cursor-pointer select-none active:bg-white/10 ${
-                        active === link.id
-                          ? 'text-herb-400 bg-herb-500/10'
-                          : 'text-gray-300 hover:text-white hover:bg-white/5'
-                      }`}
-                      aria-current={active === link.id ? 'page' : undefined}
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                  <a
-                    href={waUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={closeMobileMenu}
-                    className="btn-primary w-full gap-2 mt-3 py-3.5 touch-manipulation"
-                  >
-                    <MessageCircle size={20} aria-hidden />
-                    Chat on WhatsApp
-                  </a>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
       </nav>
+      {mobileMenuPortal}
     </header>
   );
 }
