@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { MessageCircle, ArrowRight, Leaf, FlaskConical, HandHeart, Truck } from 'lucide-react';
 import type { Settings } from '@/lib/types';
 import { getWhatsAppUrl, CONSULT_MESSAGE } from '@/lib/whatsapp';
@@ -16,19 +16,20 @@ const trustBadges = [
 
 export default function About({ settings }: { settings: Settings }) {
   const consultUrl = getWhatsAppUrl(settings, CONSULT_MESSAGE);
+  const reduced = useReducedMotion();
 
   return (
-    <section id="about" className="py-24 lg:py-32 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <section id="about" className="section-padding relative" aria-labelledby="about-heading">
+      <div className="container-app">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <RevealOnScroll>
             <div className="relative">
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={reduced ? false : { opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="relative rounded-3xl overflow-hidden"
+                transition={{ duration: 0.6 }}
+                className="relative rounded-3xl overflow-hidden card-surface"
               >
                 {settings.about_image_url ? (
                   <Image
@@ -36,47 +37,65 @@ export default function About({ settings }: { settings: Settings }) {
                     alt="Traditional healer preparing herbal remedies"
                     width={600}
                     height={700}
-                    className="w-full h-[400px] lg:h-[500px] object-cover"
+                    className="w-full h-[280px] sm:h-[400px] lg:h-[500px] object-cover"
                     unoptimized
+                    loading="lazy"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                 ) : (
-                  <div className="w-full h-[400px] lg:h-[500px] bg-herb-950/50 flex items-center justify-center text-8xl">🌿</div>
+                  <div
+                    className="w-full h-[280px] sm:h-[400px] lg:h-[500px] bg-herb-950/50 flex items-center justify-center text-6xl sm:text-8xl"
+                    role="img"
+                    aria-label="Herbal healing"
+                  >
+                    🌿
+                  </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f0a] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" aria-hidden />
               </motion.div>
 
               <motion.div
-                animate={{ y: [0, -10, 0] }}
+                animate={reduced ? undefined : { y: [0, -8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -bottom-6 -right-4 sm:right-6 bg-[rgba(15,25,15,0.9)] backdrop-blur-md border border-herb-700/30 rounded-2xl px-6 py-4 shadow-xl"
+                className="absolute -bottom-4 right-2 sm:-bottom-6 sm:right-6 card-surface px-5 py-3 sm:px-6 sm:py-4 shadow-xl backdrop-blur-md"
               >
-                <div className="text-3xl font-black text-gradient">{settings.stat_years}</div>
-                <div className="text-gray-400 text-sm">Years Healing Experience</div>
+                <div className="text-2xl sm:text-3xl font-black text-gradient">{settings.stat_years}</div>
+                <div className="text-gray-400 text-xs sm:text-sm">Years Healing Experience</div>
               </motion.div>
             </div>
           </RevealOnScroll>
 
-          <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }}>
-            <motion.span variants={fadeInUp} className="text-herb-500 text-sm font-bold uppercase tracking-widest">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-60px' }}
+          >
+            <motion.p variants={fadeInUp} className="label-section">
               About the Healer
-            </motion.span>
-            <motion.h2 variants={fadeInUp} custom={1} className="text-white text-3xl sm:text-4xl font-bold mt-3 mb-6 tracking-tight">
+            </motion.p>
+            <motion.h2
+              id="about-heading"
+              variants={fadeInUp}
+              custom={1}
+              className="heading-section mt-2 sm:mt-3 mb-4 sm:mb-6"
+            >
               {settings.about_title}
             </motion.h2>
-            <motion.p variants={fadeInUp} custom={2} className="text-gray-400 leading-relaxed mb-4">
+            <motion.p variants={fadeInUp} custom={2} className="text-body mb-4">
               {settings.about_paragraph1}
             </motion.p>
-            <motion.p variants={fadeInUp} custom={3} className="text-gray-400 leading-relaxed mb-8">
+            <motion.p variants={fadeInUp} custom={3} className="text-body mb-6 sm:mb-8">
               {settings.about_paragraph2}
             </motion.p>
 
-            <motion.div variants={fadeInUp} custom={4} className="grid grid-cols-2 gap-4 mb-8">
+            <motion.div variants={fadeInUp} custom={4} className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {trustBadges.map((badge) => (
                 <div
                   key={badge.label}
-                  className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-herb-700/30 transition-colors"
+                  className="flex items-center gap-3 p-3.5 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-herb-700/30 transition-colors min-h-[72px]"
                 >
-                  <badge.icon size={28} className="text-herb-400" />
+                  <badge.icon size={24} className="text-herb-400 shrink-0" aria-hidden />
                   <div>
                     <div className="text-white text-sm font-semibold">{badge.label}</div>
                     <div className="text-gray-500 text-xs">{badge.desc}</div>
@@ -91,13 +110,13 @@ export default function About({ settings }: { settings: Settings }) {
               href={consultUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 bg-herb-600 hover:bg-herb-500 text-white font-semibold px-6 py-3.5 rounded-full transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
+              className="btn-primary gap-2 px-6 py-3.5 text-sm sm:text-base"
+              whileHover={reduced ? undefined : { scale: 1.02 }}
+              whileTap={reduced ? undefined : { scale: 0.98 }}
             >
-              <MessageCircle size={20} />
+              <MessageCircle size={20} aria-hidden />
               Consult with Me
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={18} aria-hidden />
             </motion.a>
           </motion.div>
         </div>

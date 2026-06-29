@@ -1,27 +1,40 @@
-import { fetchSiteData } from '@/lib/auth';
-import { DEFAULT_SETTINGS, DEFAULT_PRODUCTS, DEFAULT_TESTIMONIALS, DEFAULT_BANNERS } from '@/lib/seed-data';
+import type { Metadata } from 'next';
+import { getSiteData } from '@/lib/data';
+import { buildHomeMetadata } from '@/lib/seo/metadata';
+import {
+  organizationSchema,
+  websiteSchema,
+  localBusinessSchema,
+  itemListSchema,
+  faqSchema,
+} from '@/lib/seo/jsonld';
+import { getSiteFaqs } from '@/lib/seo/product-content';
+import JsonLd from '@/components/seo/JsonLd';
 import HomePage from '@/components/HomePage';
-import type { SiteData } from '@/lib/types';
-
-function getFallbackData(): SiteData {
-  return {
-    settings: { id: 1, ...DEFAULT_SETTINGS },
-    products: DEFAULT_PRODUCTS.map((p, i) => ({ ...p, id: `fallback-${i}` })),
-    banners: DEFAULT_BANNERS.map((b, i) => ({ ...b, id: `fallback-${i}` })),
-    testimonials: DEFAULT_TESTIMONIALS.map((t, i) => ({ ...t, id: `fallback-${i}` })),
-  };
-}
 
 export const revalidate = 60;
 
+export async function generateMetadata(): Promise<Metadata> {
+  const data = await getSiteData();
+  return buildHomeMetadata(data.settings);
+}
+
 export default async function Page() {
-  let data: SiteData;
+  const data = await getSiteData();
+  const faqs = getSiteFaqs(data.settings.location);
 
-  try {
-    data = await fetchSiteData();
-  } catch {
-    data = getFallbackData();
-  }
-
-  return <HomePage data={data} />;
+  return (
+    <>
+      <JsonLd
+        data={[
+          organizationSchema(data.settings),
+          websiteSchema(data.settings),
+          localBusinessSchema(data.settings, data.testimonials),
+          itemListSchema(data.products, data.settings),
+          faqSchema(faqs),
+        ]}
+      />
+      <HomePage data={data} faqs={faqs} />
+    </>
+  );
 }

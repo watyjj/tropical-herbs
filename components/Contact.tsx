@@ -1,12 +1,15 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { MessageCircle, Phone, MapPin } from 'lucide-react';
 import type { Settings } from '@/lib/types';
 import { getWhatsAppUrl, DEFAULT_MESSAGE } from '@/lib/whatsapp';
 import RevealOnScroll from './RevealOnScroll';
+import SectionHeader from './ui/SectionHeader';
 
 export default function Contact({ settings }: { settings: Settings }) {
+  const reduced = useReducedMotion();
+
   const cards = [
     {
       icon: MessageCircle,
@@ -16,6 +19,7 @@ export default function Contact({ settings }: { settings: Settings }) {
       gradient: 'from-whatsapp/20 to-green-600/10',
       iconColor: '#25D366',
       borderHover: 'hover:border-whatsapp/40',
+      external: true,
     },
     {
       icon: Phone,
@@ -25,6 +29,7 @@ export default function Contact({ settings }: { settings: Settings }) {
       gradient: 'from-herb-500/20 to-emerald-600/10',
       iconColor: '#22c55e',
       borderHover: 'hover:border-herb-500/40',
+      external: false,
     },
     {
       icon: MapPin,
@@ -34,37 +39,41 @@ export default function Contact({ settings }: { settings: Settings }) {
       gradient: 'from-blue-500/20 to-cyan-600/10',
       iconColor: '#3b82f6',
       borderHover: 'hover:border-blue-500/40',
+      external: true,
     },
   ];
 
   return (
-    <section id="contact" className="py-24 lg:py-32 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="section-padding relative" aria-labelledby="contact-heading">
+      <div className="container-app">
         <RevealOnScroll>
-          <div className="text-center mb-12">
-            <span className="text-herb-500 text-sm font-bold uppercase tracking-widest">Contact</span>
-            <h2 className="text-white text-3xl sm:text-4xl font-bold mt-3 tracking-tight">Get in Touch</h2>
-            <p className="text-gray-500 mt-4">Reach out anytime — we&apos;re always happy to help with your healing journey.</p>
-          </div>
+          <SectionHeader
+            headingId="contact-heading"
+            label="Contact"
+            title="Get in Touch"
+            description="Reach out anytime — we're always happy to help with your healing journey."
+          />
         </RevealOnScroll>
 
-        <div className="grid sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           {cards.map((card, i) => (
             <RevealOnScroll key={card.label} delay={i}>
               <motion.a
                 href={card.href}
-                target={card.label === 'Location' ? '_blank' : undefined}
-                rel={card.label === 'Location' ? 'noopener noreferrer' : undefined}
-                className={`group block rounded-2xl border border-white/5 bg-[rgba(15,25,15,0.6)] p-8 text-center transition-all duration-300 ${card.borderHover} hover:shadow-lg`}
-                whileHover={{ scale: 1.03, y: -4 }}
+                target={card.external ? '_blank' : undefined}
+                rel={card.external ? 'noopener noreferrer' : undefined}
+                className={`group block card-surface-interactive p-6 sm:p-8 text-center min-h-[160px] ${card.borderHover}`}
+                whileHover={reduced ? undefined : { y: -4 }}
+                whileTap={reduced ? undefined : { scale: 0.99 }}
               >
                 <div
-                  className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${card.gradient} mb-5 group-hover:scale-110 transition-transform`}
+                  className={`inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${card.gradient} mb-4 sm:mb-5 group-hover:scale-105 transition-transform`}
+                  aria-hidden
                 >
-                  <card.icon size={32} style={{ color: card.iconColor }} />
+                  <card.icon size={28} style={{ color: card.iconColor }} />
                 </div>
-                <div className="text-gray-500 text-sm uppercase tracking-wider mb-1">{card.label}</div>
-                <div className="text-white font-semibold text-lg">{card.value}</div>
+                <div className="text-gray-500 text-xs sm:text-sm uppercase tracking-wider mb-1">{card.label}</div>
+                <div className="text-white font-semibold text-base sm:text-lg">{card.value}</div>
               </motion.a>
             </RevealOnScroll>
           ))}
