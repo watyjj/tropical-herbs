@@ -10,27 +10,31 @@ const inter = Inter({
   preload: true,
 });
 
-const siteUrl = getSiteUrl();
-
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: `${SITE_NAME} | Natural Herbs & Traditional Herbal Products`,
-    template: `%s`,
-  },
-  description:
-    'Premium natural herbs and traditional herbal remedies. Handcrafted medicinal herbs for wellness. Order via WhatsApp.',
-  applicationName: SITE_NAME,
-  authors: [{ name: SITE_NAME }],
-  creator: SITE_NAME,
-  publisher: SITE_NAME,
-  formatDetection: { telephone: true, email: false },
-  manifest: '/manifest.webmanifest',
-  icons: {
-    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
-    apple: [{ url: '/icon.svg', type: 'image/svg+xml' }],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const siteUrl = getSiteUrl();
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: `${SITE_NAME} | Natural Herbs & Traditional Herbal Products`,
+      template: `%s`,
+    },
+    description:
+      'Premium natural herbs and traditional herbal remedies. Handcrafted medicinal herbs for wellness. Order via WhatsApp.',
+    applicationName: SITE_NAME,
+    authors: [{ name: SITE_NAME }],
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    formatDetection: { telephone: true, email: false },
+    manifest: '/manifest.webmanifest',
+    icons: {
+      icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+      apple: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    },
+    alternates: {
+      canonical: siteUrl,
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: '#0a0f0a',
@@ -40,6 +44,8 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const siteUrl = getSiteUrl();
+
   return (
     <html lang="en-ZA" className="scroll-smooth">
       <head>

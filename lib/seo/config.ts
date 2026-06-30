@@ -1,13 +1,22 @@
 export const SITE_NAME = 'Tropical Herbs';
 
+/** Production domain — used when env vars are missing at build time */
+export const PRODUCTION_SITE_URL = 'https://tropical-herbs.com';
+
 export function getSiteUrl(): string {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.trim().replace(/\/$/, '');
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '');
+  if (fromEnv) return fromEnv;
+
+  // Prefer custom domain in production over *.vercel.app
+  if (process.env.VERCEL_ENV === 'production') {
+    return PRODUCTION_SITE_URL;
   }
+
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
-  return 'https://tropical-herbs-uw5g.vercel.app';
+
+  return PRODUCTION_SITE_URL;
 }
 
 export const DEFAULT_OG_IMAGE = '/og-image.svg';

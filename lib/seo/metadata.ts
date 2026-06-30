@@ -3,14 +3,14 @@ import type { Product, Settings, Testimonial } from '@/lib/types';
 import { getSiteUrl, SITE_NAME, DEFAULT_OG_IMAGE, SEO_KEYWORDS } from './config';
 import { getProductSlug, getCategorySlug } from './slug';
 
-const siteUrl = getSiteUrl();
-
 function ogImage(url?: string) {
+  const siteUrl = getSiteUrl();
   const img = url || DEFAULT_OG_IMAGE;
   return img.startsWith('http') ? img : `${siteUrl}${img}`;
 }
 
 export function buildHomeMetadata(settings: Settings): Metadata {
+  const siteUrl = getSiteUrl();
   const title = `${settings.site_name} | Natural Herbs & Traditional Herbal Products`;
   const description =
     `Shop premium natural herbs and traditional herbal remedies at ${settings.site_name}. ` +
@@ -45,6 +45,7 @@ export function buildHomeMetadata(settings: Settings): Metadata {
 }
 
 export function buildProductMetadata(product: Product, settings: Settings): Metadata {
+  const siteUrl = getSiteUrl();
   const slug = getProductSlug(product);
   const url = `${siteUrl}/products/${slug}`;
   const title = `${product.name} — ${product.category} | Buy Online | ${SITE_NAME}`;
@@ -70,6 +71,7 @@ export function buildProductMetadata(product: Product, settings: Settings): Meta
 }
 
 export function buildCategoryMetadata(category: string, settings: Settings, count: number): Metadata {
+  const siteUrl = getSiteUrl();
   const slug = getCategorySlug(category);
   const url = `${siteUrl}/categories/${slug}`;
   const title = `${category} Herbs & Products | ${SITE_NAME}`;
@@ -87,6 +89,7 @@ export function buildCategoryMetadata(category: string, settings: Settings, coun
 }
 
 export function buildBlogIndexMetadata(): Metadata {
+  const siteUrl = getSiteUrl();
   const url = `${siteUrl}/blog`;
   const title = `Herbal Wellness Blog | Natural Remedies & Traditional Healing | ${SITE_NAME}`;
   const description =
@@ -102,6 +105,7 @@ export function buildBlogIndexMetadata(): Metadata {
 }
 
 export function buildBlogPostMetadata(post: { title: string; description: string; slug: string; image?: string }): Metadata {
+  const siteUrl = getSiteUrl();
   const url = `${siteUrl}/blog/${post.slug}`;
   return {
     title: `${post.title} | ${SITE_NAME} Blog`,
@@ -119,6 +123,7 @@ export function buildBlogPostMetadata(post: { title: string; description: string
 }
 
 export function buildFaqMetadata(settings: Settings): Metadata {
+  const siteUrl = getSiteUrl();
   const url = `${siteUrl}/faq`;
   const title = `Herbal Products FAQ | Ordering, Delivery & Natural Remedies | ${SITE_NAME}`;
   const description =

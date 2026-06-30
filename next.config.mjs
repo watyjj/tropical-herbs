@@ -7,6 +7,22 @@ const nextConfig = {
     ],
     formats: ['image/avif', 'image/webp'],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'tropical-herbs.vercel.app' }],
+        destination: 'https://tropical-herbs.com/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.tropical-herbs.com' }],
+        destination: 'https://tropical-herbs.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
